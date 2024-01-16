@@ -7,6 +7,8 @@
 
 #include "BLESerial.h"
 
+#include "HAL_commands.h"
+
 #define LED_PIN 8
 
 
@@ -38,8 +40,13 @@ void setup() {
 }
 
 void loop() {
+   //lineFollowerTick();
+   Serial.println("Tick");
 
-   lineFollowerTick();
+   setServoAngle(1, 15);
+   delay(1000);
+   setServoAngleStep(1, 90, 5, 0);
+   delay(3000);
   
    // BLECommTick();
    delay(10);

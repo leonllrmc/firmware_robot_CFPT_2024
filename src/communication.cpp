@@ -23,6 +23,7 @@ void sendCommandBlocking(String cmd)
 
    sendCommand(cmd);
    emptySerialQueue();
+   delay(2);
 
    sendCommand("WR");
 
