@@ -22,7 +22,7 @@ void setup() {
    initCommunication();
    emptySerialQueue();
 
-   //  BLECommInit();
+   // BLECommInit();
 
 
    Serial.println("Begun USB serial port");
@@ -32,6 +32,8 @@ void setup() {
 
    sendCommand("AC2"); // set Acceleration to low
 
+   sendCommand("AV10");
+
    lineFollowStartup();
 }
 
@@ -39,8 +41,7 @@ void loop() {
 
    lineFollowerTick();
   
-   BLECommTick();
-   delay(2);
-
+   // BLECommTick();
+   delay(10);
 }
 

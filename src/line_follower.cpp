@@ -14,7 +14,7 @@ void lineFollowStartup()
 {
    //SerialBT.begin("ESP32_LLR_robot"); //Bluetooth device name
 
-   sendCommand("PW" + String(BASE_SPEED));
+   sendCommand("PW" + String(BASE_SPEED*10));
 
    sendCommand("AC2");
 
@@ -59,9 +59,9 @@ void lineFollowerTick()
 
       //SerialBT.println("Going left: " + String(angleCorrection));
 
-      sendCommand("PG" + String((int)((0.5-angleCorrection)*baseSpeed)));
+      sendCommand("PG" + String((int)(max(0.5-angleCorrection, 0.0)*baseSpeed)*10));
 
-      sendCommand("PD" + String((int)((0.5+angleCorrection)*baseSpeed)));
+      sendCommand("PD" + String((int)(abs(0.5+angleCorrection)*baseSpeed)*10));
 
       lastDirection = true;
    }
@@ -77,9 +77,9 @@ void lineFollowerTick()
 
       //SerialBT.println("Going right: " + String(angleCorrection));
 
-      sendCommand("PD" + String((int)((0.5-angleCorrection)*baseSpeed)));
+      sendCommand("PD" + String((int)(max(0.5-angleCorrection, 0.0)*baseSpeed)*10));
 
-      sendCommand("PG" + String((int)((0.5+angleCorrection)*baseSpeed)));
+      sendCommand("PG" + String((int)(abs(0.5+angleCorrection)*baseSpeed)*10));
 
       lastDirection = false;
    }           
@@ -89,16 +89,16 @@ void lineFollowerTick()
       if(lastDirection)
       {
          // recover to left
-         sendCommand("PD" + String((int)((0.25+(RECOVERY_COEFF/4))*RECOVERY_SPEED)));
+         sendCommand("PD" + String((int)(abs(0.25+(RECOVERY_COEFF/4))*RECOVERY_SPEED)*10));
 
-         sendCommand("PG" + String((int)((0.25-(RECOVERY_COEFF/4))*RECOVERY_SPEED)));
+         sendCommand("PG" + String((int)(max(0.25-(RECOVERY_COEFF/4), 0.0)*RECOVERY_SPEED)*10));
       }
       else
       {
          // recover to right
-         sendCommand("PD" + String((int)((0.25-(RECOVERY_COEFF/4))*RECOVERY_SPEED)));
+         sendCommand("PD" + String((int)(max(0.25-(RECOVERY_COEFF/4), 0.0)*RECOVERY_SPEED)*10));
 
-         sendCommand("PG" + String((int)((0.25+(RECOVERY_COEFF/4))*RECOVERY_SPEED)));
+         sendCommand("PG" + String((int)(abs(0.25+(RECOVERY_COEFF/4))*RECOVERY_SPEED)*10));
       }
 
       lastRight = lineRight;
@@ -106,9 +106,9 @@ void lineFollowerTick()
    }
    else if(lineLeft == lineRight)
    {
-      sendCommand("PD" + String(SPEED_COEFF_0));
+      sendCommand("PD" + String(SPEED_COEFF_0*10));
 
-      sendCommand("PG" + String(SPEED_COEFF_0));
+      sendCommand("PG" + String(SPEED_COEFF_0*10));
    }
 }
 
@@ -152,12 +152,12 @@ float getAngleCorrection(uint8_t baseSpeed, uint8_t lineUsed, char dir='L')
       return 0;
    }
 
-   int angleCorrection = (((float)coeffBit0 * ANGLE_COEFF_0) + ((float)coeffBit1 * ANGLE_COEFF_1) + ((float)coeffBit2 * ANGLE_COEFF_2) + ((float)coeffBit3 * ANGLE_COEFF_3)) / (float)getBitNumber(lineUsed);
+   float angleCorrection = (((float)coeffBit0 * ANGLE_COEFF_0) + ((float)coeffBit1 * ANGLE_COEFF_1) + ((float)coeffBit2 * ANGLE_COEFF_2) + ((float)coeffBit3 * ANGLE_COEFF_3)) / (float)getBitNumber(lineUsed);
 
    // Serial.printf("Returned angleCoeff: %i, for baseSpeed of: %i", angleCorrection, baseSpeed);
    Serial.println("Returned angleCoeff: " + String(angleCorrection) +", for baseSpeed of: " + String(baseSpeed));
 
-   // sendBLEText("Returned angleCoeff: " + String(angleCorrection) +", for baseSpeed of: " + String(baseSpeed) + "With sensors being" + String(coeffBit0) + String(coeffBit1) + String(coeffBit2) + String(coeffBit3) + "and direction being" + String(dir) + "\n\r");
+   //sendBLEText("Returned angleCoeff: " + String(angleCorrection) +", for baseSpeed of: " + String(baseSpeed) + "With sensors being" + String(coeffBit0) + String(coeffBit1) + String(coeffBit2) + String(coeffBit3) + "and direction being" + String(dir) + "\n\r");
 
 
    return angleCorrection;

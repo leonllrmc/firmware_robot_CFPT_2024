@@ -22,6 +22,10 @@ void sendCommandBlocking(String cmd)
    emptySerialQueue();
 
    sendCommand(cmd);
+   emptySerialQueue();
+
+   sendCommand("WR");
+
    waitForCmdReturnBlocking();
 }
 
@@ -40,18 +44,18 @@ void waitForCmdReturnBlocking()
    {
       if(RobotSerial.available())
       {
-         if((char)RobotSerial.read() == '\n')
+         if((char)RobotSerial.read() == '\n' || (char)RobotSerial.read() == '\r')
          {
             return;
          }
       }
 
-      delay(10);
+      delay(2);
       timeoutCounter++;
 
-      if(timeoutCounter > 500)
+      if(timeoutCounter > 1000)
       {
-         return; // timeout de 5s
+         return; // timeout de 2s
       }
    }
 }

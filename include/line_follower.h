@@ -24,7 +24,7 @@ const float ANGLE_COEFF_3 = 4;
 
 const float RECOVERY_COEFF = 4.2;
 
-#define FILTER_THRESHOLD 8
+#define FILTER_THRESHOLD 999
 
 // NOTE: have each block be abs(most-less)-lesser
 const int SPEED_COEFF_0 = 30;
