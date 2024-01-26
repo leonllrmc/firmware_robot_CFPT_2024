@@ -9,6 +9,12 @@
 
 #include "HAL_commands.h"
 
+#include "distance_sensor.h"
+
+#include <Wire.h>
+
+//#include "accelerometer.h"
+
 #define LED_PIN 8
 
 
@@ -19,10 +25,14 @@ void setup() {
    // put your setup code here, to run once:
    Serial.begin(115200); // Serial for usb debug
 
+   //Wire.begin(8, 9);
+
    pinMode(LED_PIN, OUTPUT);
 
    initCommunication();
    emptySerialQueue();
+
+   Serial.println("Inited communication");
 
    // BLECommInit();
 
@@ -34,21 +44,42 @@ void setup() {
 
    sendCommand("AC2"); // set Acceleration to low
 
-   sendCommand("AV10");
 
-   lineFollowStartup();
+   //lineFollowStartup();
+   //initAccelerometer();
+
+   initDistanceSensors(0x29);
+
+   Serial.println("Inited distance sensor");
 }
 
 void loop() {
    //lineFollowerTick();
-   Serial.println("Tick");
+   
+   //moveForward(100);
+   //accelerometerTick();
 
-   setServoAngle(1, 15);
-   delay(1000);
-   setServoAngleStep(1, 90, 5, 0);
-   delay(3000);
+   //moveBackward(100);
+   //accelerometerTick();
   
    // BLECommTick();
+
+   /*moveToDistanceFromWall(100);
+
+   delay(5000);
+
+   moveToDistanceFromWall(120);
+
+   delay(5000);
+
+   moveToDistanceFromWall(70);
+
+   delay(5000);*/
+
+   getStraightWithWall();
+
+   delay(500);
+
    delay(10);
 }
 

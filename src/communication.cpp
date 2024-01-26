@@ -2,6 +2,8 @@
 #include <HardwareSerial.h>
 #include "communication.h"
 
+#include "accelerometer.h"
+
 HardwareSerial RobotSerial(1);
 
 void initCommunication()
@@ -43,6 +45,8 @@ void waitForCmdReturnBlocking()
    // wait until the char \n is recieved
    while(1)
    {
+      accelerometerUpdate();
+
       if(RobotSerial.available())
       {
          if((char)RobotSerial.read() == '\n' || (char)RobotSerial.read() == '\r')

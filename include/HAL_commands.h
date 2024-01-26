@@ -11,3 +11,11 @@ void turnRight(int angle);
 void setServoAngle(uint8_t servoID, uint8_t angle);
 
 void setServoAngleStep(uint8_t servoID, uint8_t angle, uint8_t stepAmount, uint8_t stepDelay=50);
+
+//void turnRightGyroscopeCorrected(int angle);
+
+//void turnLeftGyroscopeCorrected(int angle);
+
+void moveToDistanceFromWall(int distance);
+
+void getStraightWithWall();
