@@ -115,8 +115,13 @@ void moveToDistanceFromWall(int distance)
 void getStraightWithWall()
 {
    int distance0 = getMesurementSensor0();
+
+   while(distance0 < 25) distance0 = getMesurementSensor0();
    delay(500);
    int distance1 = getMesurementSensor1();
+   while(distance1 < 25) distance1 = getMesurementSensor1();
+
+   
 
    Serial.println("got Distance 0|1 of: " + String(distance0) + " " + String(distance1));
 
@@ -136,7 +141,7 @@ void getStraightWithWall()
    }
    else
    {
-      turnLeft(angle);
+      turnLeft(-angle);
    }
 }
 
