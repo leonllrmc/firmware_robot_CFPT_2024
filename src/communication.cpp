@@ -25,7 +25,7 @@ void sendCommandBlocking(String cmd)
 
    sendCommand(cmd);
    emptySerialQueue();
-   delay(2);
+   delay(10);
 
    sendCommand("WR");
 
@@ -58,7 +58,7 @@ void waitForCmdReturnBlocking()
       delay(2);
       timeoutCounter++;
 
-      if(timeoutCounter > 1000)
+      if(timeoutCounter > 500)
       {
          return; // timeout de 2s
       }
@@ -73,10 +73,9 @@ uint8_t getLineSensorReadingBlocking()
 
    emptySerialQueue(); // pour éviter des mauvais résultats
 
-
    sendCommand("CL");
 
-   delay(1);
+   delay(5);
 
 
    while(cmd_buf_pointer < 2)

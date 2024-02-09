@@ -1,4 +1,4 @@
-void initDistanceSensors(unsigned char adress0=0x28, unsigned char adress1=0x29);
+void initDistanceSensors(unsigned char adressBack=0x28, unsigned char adressFront=0x29);
 
-int getMesurementSensor0();
-int getMesurementSensor1();
+int getMesurementSensorBack();
+int getMesurementSensorFront();

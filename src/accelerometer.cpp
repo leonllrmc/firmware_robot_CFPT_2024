@@ -2,9 +2,16 @@
 
 #include "MPU9250.h"
 
-#define MAGNETIC_DECLINATION 2.49
+#include <Ticker.h>
+
+#include "accelerometer.h"
+
+
+#define MAGNETIC_DECLINATION 3.49
 
 MPU9250 mpu;
+
+Ticker updateTask(accelerometerUpdate, 10);
 
 void initAccelerometer()
 {
@@ -12,35 +19,37 @@ void initAccelerometer()
 
    delay(500);
 
-   MPU9250Setting setting;
-   setting.accel_fs_sel = ACCEL_FS_SEL::A16G;
-   setting.gyro_fs_sel = GYRO_FS_SEL::G2000DPS;
-   setting.mag_output_bits = MAG_OUTPUT_BITS::M16BITS;
-   setting.fifo_sample_rate = FIFO_SAMPLE_RATE::SMPL_200HZ;
-   setting.gyro_fchoice = 0x03;
-   setting.gyro_dlpf_cfg = GYRO_DLPF_CFG::DLPF_41HZ;
-   setting.accel_fchoice = 0x01;
-   setting.accel_dlpf_cfg = ACCEL_DLPF_CFG::DLPF_45HZ;
+      MPU9250Setting setting;
+
+    // Sample rate must be at least 2x DLPF rate
+    setting.accel_fs_sel = ACCEL_FS_SEL::A16G;
+    setting.gyro_fs_sel = GYRO_FS_SEL::G1000DPS;
+    setting.mag_output_bits = MAG_OUTPUT_BITS::M16BITS;
+    setting.fifo_sample_rate = FIFO_SAMPLE_RATE::SMPL_250HZ;
+    setting.gyro_fchoice = 0x03;
+    setting.gyro_dlpf_cfg = GYRO_DLPF_CFG::DLPF_20HZ;
+    setting.accel_fchoice = 0x01;
+    setting.accel_dlpf_cfg = ACCEL_DLPF_CFG::DLPF_45HZ;
 
 
+        if (!mpu.setup(0x68, setting)) {  // change to your own address
+         Serial.println("MPU connection failed. Please check your connection with `connection_check` example.");
+    }
 
-
-   if (!mpu.setup(0x68, setting))  // change to your own address
-   {
-      Serial.println("Error: cannot connect accelerometer");
-   }
 
     mpu.selectFilter(QuatFilterSel::MADGWICK);
     mpu.setFilterIterations(15);
 
-    // calibrated at 19/12/2023
+
+    // calibrated at 19/12/2023, new at 06/02/2024
     // magnetic calibration is not optimal, so it may need to be updated
-    mpu.setAccBias(12.81, 9.85, 48.60);
-    mpu.setGyroBias(-1.99, 0.17, -2.55);
-    mpu.setMagBias(49.69, -430.89, -365.53);
-    mpu.setMagScale(1.04, 0.91, 1.07);
+    mpu.setAccBias(29.61, 16.31, 30.60);
+    mpu.setGyroBias(-2.06, 1.80, -1.46);
+    mpu.setMagBias(59.72, 118.02, -29.77);
+    mpu.setMagScale(0.95, 0.86, 1.26);
     mpu.setMagneticDeclination(MAGNETIC_DECLINATION);
 
+   updateTask.start();
 }
 
 void print_roll_pitch_yaw() {
@@ -86,11 +95,13 @@ void accelerometerTick()
 {
    if(accelerometerUpdate())
    {
-      //print_roll_pitch_yaw();
+      print_roll_pitch_yaw();
    }
 }
 
 int accelerometerGetYaw()
 {
+   while(!accelerometerUpdate());
+
    return mpu.getYaw();
 }
