@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 
+/* // remove because caused build error (lib not found)...
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -106,3 +107,4 @@ void sendBLEText(String txt)
       delay(1); // bluetooth stack will go into congestion, if too many packets are sent
 	}
 }
+*/

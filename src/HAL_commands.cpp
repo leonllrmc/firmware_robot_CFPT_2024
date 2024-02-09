@@ -156,13 +156,13 @@ void moveToDistanceFromWallWithFront(int distance)
    {
       moveForward(correction);
 
-     Serial.println("Backward of : " + String(correction));
+     Serial.println("Forward of : " + String(correction));
    }
    else
    {
       moveBackward(-correction);
 
-     Serial.println("Forward of : " + String(-correction));
+     Serial.println("Backward of : " + String(-correction));
    }
 
   Serial.println("");

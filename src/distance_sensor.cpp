@@ -4,8 +4,8 @@
 // increasing it may increase readings accuracy but will take more time
 #define SENSOR_TIMING_BUGET 200000
 
-#define DISTANCE_OFFSET_FRONT -3
-#define DISTANCE_OFFSET_BACK -3
+#define DISTANCE_OFFSET_FRONT 3
+#define DISTANCE_OFFSET_BACK 3
 
 VL53L0X distanceSensorBack;
 VL53L0X distanceSensorFront;
@@ -50,6 +50,7 @@ void initDistanceSensors(unsigned char adressBack=0x29, unsigned char adressFron
 
    distanceSensorBack.setMeasurementTimingBudget(SENSOR_TIMING_BUGET);
 
+
    tcaselect(1);
 
    distanceSensorFront.setTimeout(500);
@@ -88,6 +89,6 @@ int getMesurementSensorFront() {
 
   tcaselect(1);
 
-  return (distanceSensorFront.readRangeSingleMillimeters() + DISTANCE_OFFSET_BACK);
+  return (distanceSensorFront.readRangeSingleMillimeters() + DISTANCE_OFFSET_FRONT);
   if (distanceSensorFront.timeoutOccurred()) { return -1; }
 }

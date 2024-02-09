@@ -2,7 +2,6 @@
 
 #include "MPU9250.h"
 
-#include <Ticker.h>
 
 #include "accelerometer.h"
 
@@ -10,8 +9,6 @@
 #define MAGNETIC_DECLINATION 3.49
 
 MPU9250 mpu;
-
-Ticker updateTask(accelerometerUpdate, 10);
 
 void initAccelerometer()
 {
@@ -48,8 +45,6 @@ void initAccelerometer()
     mpu.setMagBias(59.72, 118.02, -29.77);
     mpu.setMagScale(0.95, 0.86, 1.26);
     mpu.setMagneticDeclination(MAGNETIC_DECLINATION);
-
-   updateTask.start();
 }
 
 void print_roll_pitch_yaw() {
