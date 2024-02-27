@@ -14,11 +14,15 @@ uint8_t servoAngles[2] = {0, 0};
 void moveForward(int distance)
 {
    sendCommandBlocking("AV" + String(distance));
+
+   delay(50);
 }
 
 void moveBackward(int distance)
 {
    sendCommandBlocking("RE" + String(distance));
+
+   delay(50);
 }
 
 void turnLeft(int angle)
@@ -37,6 +41,8 @@ void turnLeft(int angle)
    Serial.println("\n" + cmd);
 
    sendCommandBlocking(cmd);
+
+   delay(50);
 }
 
 void turnRight(int angle)
@@ -55,6 +61,8 @@ void turnRight(int angle)
    Serial.println("\n" + cmd);
 
    sendCommandBlocking(cmd);
+
+   delay(50);
 }
 
 void setServoAngle(uint8_t servoID, uint8_t angle)

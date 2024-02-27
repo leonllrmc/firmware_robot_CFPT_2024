@@ -8,16 +8,35 @@
 
 #include "accelerometer.h"
 
+#define RST_PIN 5
+#define RST_PIN_STRAT 4
+
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(16, PIN, NEO_RGBW + NEO_KHZ800);
 
 HardwareSerial RobotSerial(1);
 
 int j;
 
+void setLedColor(uint32_t color)
+{
+   for(int i=0; i< strip.numPixels(); i++) {
+      strip.setPixelColor(i, color);
+   }
+   strip.show();
+}
+
+void setLedColorRGBW(uint8_t r, uint8_t g, uint8_t b, uint8_t w)
+{
+   for(int i=0; i< strip.numPixels(); i++) {
+      strip.setPixelColor(i, r, g, b, w);
+   }
+   strip.show();
+}
+
 void initCommunication()
 {
   strip.begin();
-  strip.setBrightness(30); // was 70, ajusted for test to prevent excessive battery usage
+  strip.setBrightness(10); // was 70, ajusted for test to prevent excessive battery usage
   strip.show(); // Initialize all pixels to 'off'
 
    RobotSerial.begin(115200, SERIAL_8N1, 20, 21);
@@ -73,7 +92,10 @@ void sendCommandBlocking(String cmd)
 
    sendCommand("WR");
 
-   waitForCmdReturnBlocking();
+   if(!waitForCmdReturnBlocking())
+   {
+      sendCommandBlocking(cmd);
+   }
 }
 
 void emptySerialQueue()
@@ -81,7 +103,7 @@ void emptySerialQueue()
    while(RobotSerial.available() > 0) RobotSerial.read();
 }
 
-void waitForCmdReturnBlocking()
+bool waitForCmdReturnBlocking()
 {
 
    int timeoutCounter = 0;
@@ -89,22 +111,22 @@ void waitForCmdReturnBlocking()
    // wait until the char \n is recieved
    while(1)
    {
-      accelerometerUpdate();
+      rainbowCycle();
 
       if(RobotSerial.available())
       {
          if((char)RobotSerial.read() == '\n' || (char)RobotSerial.read() == '\r')
          {
-            return;
+            return true;
          }
       }
 
       delay(2);
       timeoutCounter++;
 
-      if(timeoutCounter > 500)
+      if(timeoutCounter > 5000)
       {
-         return; // timeout de 2s
+         return false; // timeout de 2s
       }
    }
 }
@@ -133,4 +155,69 @@ uint8_t getLineSensorReadingBlocking()
    }
 
    return (uint8_t)strtol(cmd_buf, (char**)NULL, 16);
+}
+
+void startLineFollowerBlocking()
+{
+   sendCommand("LF");
+   delay(3000);
+
+
+   // wait until the char 0 is recieved
+   while(1)
+   {
+
+      sendCommand("GF");
+
+      rainbowCycle();
+
+      while(RobotSerial.available())
+      {
+         if((char)RobotSerial.read() == '0')
+         {
+            while(1)
+            {
+
+               //emptySerialQueue();
+
+               sendCommand("GF");
+
+               rainbowCycle();
+               rainbowCycle();
+
+               //if(!RobotSerial.available()) continue; // check if not a temporary error before returning...
+
+               while(RobotSerial.available())
+               {
+
+                  if((char)RobotSerial.read() == '0')
+                  {
+                     for(int i=0; i< strip.numPixels(); i++) {
+                        strip.setPixelColor(i, 0xFFFFFFFF);
+                     }
+                     strip.show();
+
+                     return;
+                  }
+               }
+
+               delay(50);
+
+            }
+
+         }
+      }
+
+      delay(100);
+   }
+}
+
+void resetMotorBoard()
+{
+   digitalWrite(RST_PIN, 0);
+   digitalWrite(RST_PIN_STRAT, 0);
+   delay(50);
+   digitalWrite(RST_PIN, 1);
+   digitalWrite(RST_PIN_STRAT, 1);
+   delay(300);
 }
