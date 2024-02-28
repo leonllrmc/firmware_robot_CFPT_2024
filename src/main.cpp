@@ -221,7 +221,7 @@ void coreStateMachineTick()
          setSpeed(40);
 
          //moveToDistanceFromWallWithBack(491 - 9);
-         moveToDistanceFromWallWithFront(275 - (30 + 10 + 20));
+         moveToDistanceFromWallWithFront(275 - (30 + 10) + 20);
 
          setServoAngleStep(1, SERVO_ANGLE_LOW - 2, 2, 10);
          delay(100);

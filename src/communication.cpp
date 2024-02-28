@@ -230,7 +230,7 @@ void startLineFollowerBlocking()
                            else
                            {
                               emptySerialQueue();
-                     
+                              
                               break;
                            }
                         }
@@ -247,14 +247,14 @@ void startLineFollowerBlocking()
                   }
                }
 
-               delay(50);
+               delay(20);
 
             }
 
          }
       }
 
-      delay(50);
+      delay(100);
    }
 }
 
