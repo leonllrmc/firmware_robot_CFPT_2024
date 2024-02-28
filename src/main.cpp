@@ -73,15 +73,15 @@ void setup() {
   setServoAngle(1, SERVO_ANGLE_LOW); // to tune
 
 
-  delay(1500 + 2000);
+  delay(1500 + 2000 - 500);
 
   rainbowCycle();
 
-  delay(500);
+  delay(400);
 
   setLedColorRGBW(0, 100, 200, 100);
 
-   delay(800);
+   delay(400);
 
    while(getIfJumperPresent())
   { 
@@ -91,7 +91,7 @@ void setup() {
 
    moveForward(10);
 
-   moveForward(40);
+   //moveForward(40);
 
    //setServoAngleStep(1, SERVO_ANGLE_HIGH, 3, 10); // for debug purpose when only 1 "base is present"
 
@@ -109,18 +109,22 @@ void coreStateMachineTick()
       case START:
          setSpeed(50);
 
-         moveToDistanceFromWallWithBack(92 - 9);
+         //moveToDistanceFromWallWithBack(92 - 9);
 
          coreState = INITIAL_PICKUP;
          break;
 
       case INITIAL_PICKUP:
-         turnLeft(69 + 2);// was 68 //turnLeftGyroscopeCorrected(90); // please change back...
+         //turnLeft(69 + 2);// was 68 //turnLeftGyroscopeCorrected(90); // please change back..
+         
+         setSpeed(20);
 
          //was moveToDistanceFromWallWithFront 182, but laser detecteed the candelarbres
-         moveToDistanceFromWallWithBack(604 + 10);// was 618 >, then 600 >, then 580 >, then 568 < //moveForward(344 - 182);
+         moveToDistanceFromWallWithBack(604 + 10 + 5);// was 618 >, then 600 >, then 580 >, then 568 < //moveForward(344 - 182);
 
          setServoAngleStep(1, SERVO_ANGLE_HIGH, 3, 10); // to tune, steps were 2
+
+         setSpeed(50);
 
          coreState = GOTO_LINEFOLLOWER;
 
@@ -137,7 +141,7 @@ void coreStateMachineTick()
          moveForward(350 - 100);//moveForward(267 - 92 + 140);
          //moveToDistanceFromWallWithBack(267);
 
-         turnLeft(20);
+         turnLeft(20 - 10);
          delay(20);
 
          moveForward(50);
@@ -173,10 +177,162 @@ void coreStateMachineTick()
          //delay(40);
          //sendCommand("RST"); // (reseting the motor board should get rid of most problems..., if possible)
          //delay(500);
+         
+         delay(1800);
+         //moveForward(10);
+         //moveForward(10);
 
          resetMotorBoard();
          setSpeed(50);
          delay(20);
+         
+         setServoAngleStep(1, SERVO_ANGLE_HIGH, 2, 10);
+
+         sendCommand("ST");
+         delay(2);
+         sendCommand("AC2");
+         delay(2);
+         sendCommand("DI0");
+         delay(2);
+         setSpeed(50);
+         delay(50);
+
+
+         Serial.println("ended line follower...");
+
+         setLedColor(0x0F00FC00);
+         delay(20); // debug
+
+         sendCommandBlocking("AV10");
+         delay(20);
+
+         setLedColor(0x0FFC0000);
+         delay(20); // debug
+
+
+         //getMesurementSensorFront();
+         //delay(50);
+
+         moveToDistanceFromWallWithFront(330); // was 345
+         delay(50);
+
+         turnLeft(63 + 1 - 1 + 1 + 1 + 2); // was 70 < //turnLeftGyroscopeCorrected(90);
+
+         setSpeed(40);
+
+         //moveToDistanceFromWallWithBack(491 - 9);
+         moveToDistanceFromWallWithFront(275 - (30 + 10 + 20));
+
+         setServoAngleStep(1, SERVO_ANGLE_LOW - 2, 2, 10);
+         delay(100);
+
+         setSpeed(50);
+
+         moveBackward(120 + 30 + 20); // to prevent robot hitting the cadelarbre
+
+         //moveToDistanceFromWallWithBack(430);
+
+         //moveToDistanceFromWallWithFront(330); // 
+         //delay(20);
+
+//         setSpeed(50);
+
+         coreState = GOTO_PICKUP_LINE;
+
+         break;
+
+      case GOTO_PICKUP_LINE:
+
+         //getMesurementSensorFront();
+         //delay(50);
+
+         //moveToDistanceFromWallWithFront(343);
+
+         turnLeft(63); //turnRightGyroscopeCorrected(90);
+
+         //getMesurementSensorBack();
+         //delay(50);
+
+         moveToDistanceFromWallWithBack(-100);
+         delay(25);
+         moveBackward(75);
+         delay(50);
+         moveBackward(10);
+         delay(5);
+
+         resetMotorBoard();
+         sendCommand("AC2");
+         setSpeed(50);
+
+         moveForward(10);
+         moveForward(40);
+
+         moveToDistanceFromWallWithBack(92 - 9);
+
+         setServoAngle(1, SERVO_ANGLE_LOW); // to tune
+
+         coreState = PICKUP_2;
+
+         break;
+
+      case PICKUP_2:
+         turnLeft(69 - (2 + 3 + 1 + 1));// was 68 //turnLeftGyroscopeCorrected(90); // please change back...
+
+         setSpeed(30);
+
+         //was moveToDistanceFromWallWithFront 182, but laser detecteed the candelarbres
+         moveToDistanceFromWallWithBack(604 + 10 - (45 + 50 + 120) + 20 + 30);// was 618 >, then 600 >, then 580 >, then 568 < //moveForward(344 - 182);
+
+         setServoAngleStep(1, SERVO_ANGLE_HIGH, 3, 10); // to tune, steps were 2
+
+         setSpeed(50);
+
+         coreState = GOTO_LINEFOLLOWER_2;
+         break;
+
+      case GOTO_LINEFOLLOWER_2:
+
+         moveToDistanceFromWallWithBack(410); // was 438//moveToDistanceFromWallWithFront(342);
+
+         turnRight(70 + 5 - 8 - 2); // not precise turn neededed
+
+         moveForward(350);//moveForward(267 - 92 + 140);
+         //moveToDistanceFromWallWithBack(267);
+
+         turnLeft(8);
+
+         moveForward(100);
+
+
+         //§setSpeed(100);
+
+         Serial.println("Started line follower...");
+
+         /*sendCommand("ST");
+         delay(10);*/
+         sendCommand("DI0");
+         delay(10);
+
+         resetMotorBoard();
+         delay(20);
+         sendCommand("AC2");
+
+         setServoAngleStep(1, SERVO_ANGLE_HIGH, 2, 10);
+
+         startLineFollowerBlocking();
+
+         coreState = DEPOSIT_2;
+
+         break;
+
+      case DEPOSIT_2:
+         delay(1800);
+         //moveForward(10);
+         //moveForward(10);
+
+         resetMotorBoard();
+         delay(20);
+         setSpeed(50);
          
          setServoAngleStep(1, SERVO_ANGLE_HIGH, 2, 10);
 
@@ -213,148 +369,14 @@ void coreStateMachineTick()
          //moveToDistanceFromWallWithBack(491 - 9);
          moveToDistanceFromWallWithFront(275 - 30);
 
-         setServoAngleStep(1, SERVO_ANGLE_LOW, 2, 10);
+         setServoAngleStep(1, SERVO_ANGLE_LOW - 2, 2, 10);
          delay(100);
-
-         moveBackward(120); // to prevent robot hitting the cadelarbre
-
-         //moveToDistanceFromWallWithBack(430);
-
-         //moveToDistanceFromWallWithFront(330); // 
-         //delay(20);
-
-//         setSpeed(50);
-
-         coreState = GOTO_PICKUP_LINE;
-
-         break;
-
-      case GOTO_PICKUP_LINE:
-
-         //getMesurementSensorFront();
-         //delay(50);
-
-         //moveToDistanceFromWallWithFront(343);
-
-         turnLeft(63); //turnRightGyroscopeCorrected(90);
-
-         //getMesurementSensorBack();
-         //delay(50);
-
-         moveToDistanceFromWallWithBack(-100);
-         delay(25);
-         moveBackward(50);
-         delay(50);
-
-         resetMotorBoard();
-         sendCommand("AC2");
-         setSpeed(50);
-
-         moveForward(10);
-         moveForward(40);
-
-         moveToDistanceFromWallWithBack(92 - 9);
-
-         setServoAngle(1, SERVO_ANGLE_LOW); // to tune
-
-         coreState = PICKUP_2;
-
-         break;
-
-      case PICKUP_2:
-         turnLeft(69 - (2 + 3 - 1));// was 68 //turnLeftGyroscopeCorrected(90); // please change back...
-
-         //was moveToDistanceFromWallWithFront 182, but laser detecteed the candelarbres
-         moveToDistanceFromWallWithBack(604 + 10 - 20);// was 618 >, then 600 >, then 580 >, then 568 < //moveForward(344 - 182);
-
-         setServoAngleStep(1, SERVO_ANGLE_HIGH, 3, 10); // to tune, steps were 2
-
-         coreState = GOTO_LINEFOLLOWER_2;
-         break;
-
-      case GOTO_LINEFOLLOWER_2:
-
-         moveToDistanceFromWallWithBack(410); // was 438//moveToDistanceFromWallWithFront(342);
-
-         turnRight(70); // not precise turn neededed
-
-         moveForward(350 - 100);//moveForward(267 - 92 + 140);
-         //moveToDistanceFromWallWithBack(267);
-
-         turnLeft(10);
-
-         moveForward(100);
-
-
-         setSpeed(100);
-
-         Serial.println("Started line follower...");
-
-         /*sendCommand("ST");
-         delay(10);*/
-         sendCommand("DI0");
-         delay(10);
-
-         resetMotorBoard();
-         delay(20);
-         sendCommand("AC2");
-
-         setServoAngleStep(1, SERVO_ANGLE_HIGH, 2, 10);
-
-         startLineFollowerBlocking();
-
-         coreState = DEPOSIT_2;
-
-         break;
-
-      case DEPOSIT_2:
-         resetMotorBoard();
-         delay(20);
-         setSpeed(50);
-         
-         setServoAngleStep(1, SERVO_ANGLE_HIGH, 2, 10);
-
-         sendCommand("ST");
-         delay(2);
-         sendCommand("AC2");
-         delay(2);
-         sendCommand("DI0");
-         delay(2);
-         setSpeed(50);
-         delay(50);
-
-
-         Serial.println("ended line follower...");
-
-         setLedColor(0x0F00FC00);
-         delay(20); // debug
-
-         sendCommandBlocking("AV10");
-         delay(20);
-
-         setLedColor(0x0FFC0000);
-         delay(20); // debug
-
-
-         //getMesurementSensorFront();
-         //delay(50);
-
-         moveToDistanceFromWallWithFront(330); // was 345
-         delay(50);
-
-         turnLeft(63); // was 70 < //turnLeftGyroscopeCorrected(90);
-
-         //moveToDistanceFromWallWithBack(491 - 9);
-         moveToDistanceFromWallWithFront(275);
-
-         setServoAngleStep(1, SERVO_ANGLE_LOW, 2, 10);
-         delay(300);
 
          moveBackward(50); // to prevent robot hitting the cadelarbre
 
          //moveToDistanceFromWallWithBack(430);
-         moveToDistanceFromWallWithFront(330);
-         delay(20);
+         //moveToDistanceFromWallWithFront(330);
+         //delay(20); not really needed for this use case
 
          coreState = INTERRUPT_TIMER;
 

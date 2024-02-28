@@ -9,6 +9,7 @@
       "tuple": "cpp",
       "utility": "cpp",
       "random": "cpp",
-      "cmath": "cpp"
+      "cmath": "cpp",
+      "cstdlib": "cpp"
    }
 }

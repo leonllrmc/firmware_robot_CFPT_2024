@@ -157,6 +157,7 @@ uint8_t getLineSensorReadingBlocking()
    return (uint8_t)strtol(cmd_buf, (char**)NULL, 16);
 }
 
+
 void startLineFollowerBlocking()
 {
    sendCommand("LF");
@@ -171,7 +172,7 @@ void startLineFollowerBlocking()
 
       rainbowCycle();
 
-      while(RobotSerial.available())
+      if(RobotSerial.available())
       {
          if((char)RobotSerial.read() == '0')
          {
@@ -187,7 +188,7 @@ void startLineFollowerBlocking()
 
                //if(!RobotSerial.available()) continue; // check if not a temporary error before returning...
 
-               while(RobotSerial.available())
+               if(RobotSerial.available())
                {
 
                   if((char)RobotSerial.read() == '0')
@@ -197,7 +198,52 @@ void startLineFollowerBlocking()
                      }
                      strip.show();
 
-                     return;
+                     while(1)
+                     {
+
+                        //emptySerialQueue();
+
+                        sendCommand("GF");
+
+                        rainbowCycle();
+                        rainbowCycle();
+                        rainbowCycle();
+
+                        //if(!RobotSerial.available()) continue; // check if not a temporary error before returning...
+
+                        if(RobotSerial.available())
+                        {
+
+                           if((char)RobotSerial.read() == '0')
+                           {
+                              for(int i=0; i< strip.numPixels(); i++) {
+                                 strip.setPixelColor(i, 0xFFFFFFFF);
+                              }
+                              strip.show();
+
+                              
+
+                              return;
+
+                           
+                           }
+                           else
+                           {
+                              emptySerialQueue();
+                     
+                              break;
+                           }
+                        }
+
+                        delay(20);
+
+                     }
+                  }
+                  else
+                  {
+                     emptySerialQueue();
+
+                     break;
                   }
                }
 
@@ -208,7 +254,7 @@ void startLineFollowerBlocking()
          }
       }
 
-      delay(100);
+      delay(50);
    }
 }
 
@@ -216,7 +262,7 @@ void resetMotorBoard()
 {
    digitalWrite(RST_PIN, 0);
    digitalWrite(RST_PIN_STRAT, 0);
-   delay(50);
+   delay(20);
    digitalWrite(RST_PIN, 1);
    digitalWrite(RST_PIN_STRAT, 1);
    delay(300);
